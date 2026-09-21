@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.pixview.app.display.AdaptiveStatus
 import com.pixview.app.display.RefreshRateInfo
+import kotlin.math.roundToInt
 
 @Composable
 fun RefreshRateScreen(info: RefreshRateInfo, modifier: Modifier = Modifier) {
@@ -22,7 +23,7 @@ fun RefreshRateScreen(info: RefreshRateInfo, modifier: Modifier = Modifier) {
 
         MetricCard(
             title = "Current",
-            value = "${roundedHz(info.currentHz)} Hz",
+            value = "${info.currentHz.roundToInt()} Hz",
             caption = info.currentModeDescription
         )
 
@@ -30,10 +31,10 @@ fun RefreshRateScreen(info: RefreshRateInfo, modifier: Modifier = Modifier) {
             DetailRow(
                 "Supported",
                 if (info.supportedHz.isEmpty()) "Not available"
-                else info.supportedHz.joinToString(" / ") { "${roundedHz(it)}" } + " Hz"
+                else info.supportedHz.joinToString(" / ") { "${it.roundToInt()}" } + " Hz"
             )
-            DetailRow("Minimum", info.minHz?.let { "${roundedHz(it)} Hz" } ?: "Not available")
-            DetailRow("Maximum", info.maxHz?.let { "${roundedHz(it)} Hz" } ?: "Not available")
+            DetailRow("Minimum", info.minHz?.let { "${it.roundToInt()} Hz" } ?: "Not available")
+            DetailRow("Maximum", info.maxHz?.let { "${it.roundToInt()} Hz" } ?: "Not available")
         }
 
         DetailsCard(title = "Adaptive refresh rate") {
@@ -53,5 +54,3 @@ private fun adaptiveStatusLabel(status: AdaptiveStatus): String = when (status) 
     AdaptiveStatus.POSSIBLY_AVAILABLE -> "Possibly available (multiple refresh rates detected)"
     AdaptiveStatus.UNKNOWN -> "Unknown"
 }
-
-private fun roundedHz(hz: Float): Int = hz.toInt().let { if (hz - it >= 0.5f) it + 1 else it }
