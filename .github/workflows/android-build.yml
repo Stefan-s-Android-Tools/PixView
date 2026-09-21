@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Tag para el release (ej: v1.0.0). Dejar vacío si solo querés compilar sin publicar release.'
+        description: 'Tag for release (ex: v1.0.0). Leave it as blank if you dont want to push a release.'
         required: false
         type: string
 
@@ -52,20 +52,20 @@ jobs:
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: ramscope-debug-apk
+          name: pixvoew-debug-apk
           path: app/build/outputs/apk/debug/*.apk
 
   release:
     needs: build
     runs-on: ubuntu-latest
-    # Solo corre si lo disparaste manualmente Y pusiste un valor en "version"
+    # It only runs if you push It manually and put a value in version"
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version != '' }}
 
     steps:
       - name: Download built APK
         uses: actions/download-artifact@v4
         with:
-          name: ramscope-debug-apk
+          name: pixview-debug-apk
           path: dist
 
       - name: Create GitHub Release
