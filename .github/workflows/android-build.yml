@@ -52,7 +52,7 @@ jobs:
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: pixvoew-debug-apk
+          name: pixview-debug-apk
           path: app/build/outputs/apk/debug/*.apk
 
   release:
