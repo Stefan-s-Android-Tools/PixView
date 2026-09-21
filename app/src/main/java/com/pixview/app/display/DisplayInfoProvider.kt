@@ -209,12 +209,23 @@ class DisplayInfoProvider(private val activity: Activity) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
-                val info = display.brightnessInfo
+                val method = display.javaClass.getMethod("getBrightnessInfo")
+                val info = method.invoke(display)
                 if (info != null) {
-                    currentPercent = (info.brightness / info.brightnessMaximum * 100f)
-                        .roundToInt()
-                        .coerceIn(0, 100)
-                    supportsHbm = info.highBrightnessModeMaxBrightness > info.brightnessMaximum
+                    val brightnessField = info.javaClass.getField("brightness")
+                    val maxField = info.javaClass.getField("brightnessMaximum")
+                    val hbmField = info.javaClass.getField("highBrightnessModeMaxBrightness")
+
+                    val b = (brightnessField.get(info) as? Number)?.toFloat() ?: 0f
+                    val maxB = (maxField.get(info) as? Number)?.toFloat() ?: 1f
+                    val hbmMax = (hbmField.get(info) as? Number)?.toFloat() ?: 0f
+
+                    if (maxB > 0f) {
+                        currentPercent = ((b / maxB) * 100f)
+                            .roundToInt()
+                            .coerceIn(0, 100)
+                        supportsHbm = hbmMax > maxB
+                    }
                 }
             } catch (_: Exception) {
                 // Fall back to the Settings-based approach below.
